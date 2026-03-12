@@ -42,6 +42,10 @@ app.use("/auth", authRoutes);
 app.use("/api/notes",notesRoutes);
 app.use("/notes",notesRoutes);
 
+app.get("/health",(req,res)=>{
+    res.send("Thinkboard API is running");
+});
+
 connectDB().then(()=>{
     app.listen(PORT,()=>{
         console.log("Server started on PORT:",PORT);
