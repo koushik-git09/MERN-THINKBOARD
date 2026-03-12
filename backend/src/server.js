@@ -11,11 +11,16 @@ dotenv.config();
 const app=express();
 const PORT=process.env.PORT||5001;
 
+const allowedOrigins = (process.env.CLIENT_ORIGIN || "http://localhost:5173")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
 
 app.use(cors({
-    origin:"http://localhost:5173",
-})
-);
+    origin: allowedOrigins,
+    allowedHeaders: ["Content-Type", "Authorization"],
+}));
 app.use(express.json());
 app.use(rateLimiter);
 
