@@ -17,15 +17,30 @@ const allowedOrigins = (process.env.CLIENT_ORIGIN || "http://localhost:5173")
     .filter(Boolean);
 
 
-app.use(cors({
-    origin: allowedOrigins,
+const corsOptions = {
+    origin: (origin, callback) => {
+        // Allow non-browser clients (no Origin header)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.includes(origin)) return callback(null, true);
+
+        return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-}));
+    optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
 app.use(rateLimiter);
 
 app.use("/api/auth", authRoutes);
+app.use("/auth", authRoutes);
 app.use("/api/notes",notesRoutes);
+app.use("/notes",notesRoutes);
 
 connectDB().then(()=>{
     app.listen(PORT,()=>{

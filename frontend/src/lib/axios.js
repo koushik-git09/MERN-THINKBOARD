@@ -2,8 +2,14 @@ import axios from "axios";
 
 export const TOKEN_KEY = "thinkboard_token";
 
+const rawBaseUrl = import.meta.env.VITE_API_URL || "http://localhost:5001";
+const trimmedBaseUrl = rawBaseUrl.replace(/\/+$/, "");
+const normalizedBaseUrl = trimmedBaseUrl.endsWith("/api")
+  ? trimmedBaseUrl
+  : `${trimmedBaseUrl}/api`;
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5001/api",
+  baseURL: normalizedBaseUrl,
 });
 
 api.interceptors.request.use((config) => {
